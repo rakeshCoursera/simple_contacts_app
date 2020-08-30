@@ -1,9 +1,11 @@
 const express = require('express');
+const { validationResult } = require('express-validator');
 const { isLoggedIn } = require('./middleware');
 const { findUser } = require('../controllers/user');
 const {
   listContacts, getContact, createContact, updateContact, deleteContact,
 } = require('../controllers/contacts');
+const { createContactValidator, updateContactValidator } = require('../validators/contacts');
 
 const router = express.Router();
 
@@ -50,7 +52,7 @@ router.get('/:accountId', isLoggedIn, async (req, res) => {
   });
 });
 
-router.post('/', isLoggedIn, async (req, res) => {
+router.post('/', [isLoggedIn, createContactValidator], async (req, res) => {
   // const body = {
   //   firstName: 'Rakesh',
   //   middleName: 'Kumar',
@@ -59,6 +61,12 @@ router.post('/', isLoggedIn, async (req, res) => {
   //   mobile: '9326715481',
   //   mobileType: 'work',
   // };
+
+  // Finds the validation errors in this request and wraps them in an object with handy functions
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).json({ errors: errors.array() });
+  }
 
   const user = await findUser(req.user);
   if (user.statusCode === 200) {
@@ -80,7 +88,7 @@ router.post('/', isLoggedIn, async (req, res) => {
   });
 });
 
-router.patch('/', isLoggedIn, async (req, res) => {
+router.patch('/', [isLoggedIn, updateContactValidator], async (req, res) => {
   // const body = {
   //   firstName: 'Rakesh',
   //   middleName: 'kr',
@@ -91,6 +99,12 @@ router.patch('/', isLoggedIn, async (req, res) => {
   //   etag: '%EgoBAj0DCT4LPzcuGgQBAgUHIgxNU1FqTmVpUTdDRT0=',
   //   photo: 'base 64 encoded string',
   // };
+
+  // Finds the validation errors in this request and wraps them in an object with handy functions
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).json({ errors: errors.array() });
+  }
 
   const user = await findUser(req.user);
   if (user.statusCode === 200) {

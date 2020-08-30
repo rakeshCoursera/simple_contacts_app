@@ -15,13 +15,21 @@ passport.use(new GoogleStrategy({
   clientID,
   clientSecret,
   callbackURL,
-  scope: ['profile', 'email'],
+  scope: [
+    'profile',
+    'email',
+    'https://www.googleapis.com/auth/contacts'],
 },
-((accessToken, refreshToken, profile, done) => {
-  console.log('accessToken: ', accessToken);
-  // console.log('refreshToken: ', refreshToken);
-  // console.log('profile: ', profile);
-  findOrCreateUser(profile, accessToken)
-    .then(() => done(null, profile))
-    .catch(err => done(err));
+(async (accessToken, refreshToken, profile, done) => {
+  try {
+    console.log('accessToken: ', accessToken);
+    const resp = await findOrCreateUser(profile, accessToken);
+
+    if (resp.statusCode === 200) {
+      return done(null, profile);
+    }
+    return done(resp.message);
+  } catch (err) {
+    return done(err.message);
+  }
 })));

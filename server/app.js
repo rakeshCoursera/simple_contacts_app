@@ -10,6 +10,8 @@ const { mongoUser, mongoPass } = require('./config/config');
 require('./api/passport-setup');
 
 const authRoutes = require('./api/routes/auth');
+const contactsRoutes = require('./api/routes/contacts');
+const contacts = require('./api/controllers/contacts');
 
 const app = express();
 
@@ -50,6 +52,7 @@ app.get('/', (req, res) => {
 
 // routes
 app.use('/auth', authRoutes);
+app.use('/api/v1/contact', contactsRoutes);
 
 app.use((req, res, next) => {
   const error = new Error('Not found');

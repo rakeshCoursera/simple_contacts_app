@@ -5,6 +5,7 @@ const config = {
   clientSecret: process.env.CLIENT_SECRET || '',
   clientID: process.env.CLIENT_ID || '',
   callbackURL: process.env.CALLBACK_URL || '',
+  contactsApiHost: process.env.CONTACTS_API_HOST || '',
 };
 
 module.exports = config;

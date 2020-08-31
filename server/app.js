@@ -5,13 +5,12 @@ const cors = require('cors');
 const passport = require('passport');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
-const session = require('express-session');
+// const session = require('express-session');
 const { mongoUser, mongoPass } = require('./config/config');
 require('./api/passport-setup');
 
 const authRoutes = require('./api/routes/auth');
 const contactsRoutes = require('./api/routes/contacts');
-const contacts = require('./api/controllers/contacts');
 
 const app = express();
 
@@ -32,12 +31,6 @@ app.use(helmet());
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-app.use(session({
-  name: 'contact.sid',
-  secret: 'keyboard cat',
-  resave: true,
-  saveUninitialized: true,
-}));
 
 // Initializes passport and passport sessions
 app.use(passport.initialize());

@@ -15,7 +15,6 @@ const createContactValidator = [
     .withMessage('mobile must only contain numbers'),
   check('mobileType').isIn(['home', 'work', 'mobile', 'homeFax', 'workFax'])
     .withMessage('mobileType value must match the given choices'),
-  
 ];
 
 const updateContactValidator = [

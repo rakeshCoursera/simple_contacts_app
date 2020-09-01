@@ -3,7 +3,7 @@ const { contactsApiHost } = require('../../config/config');
 
 const listContacts = async (token, pageToken = null, pageNo = 0, pageSize = 10) => {
   try {
-    const pageTokenQueryString = pageNo !== 0 ? `&pageToken=${pageToken}` : '';
+    const pageTokenQueryString = pageNo !== 0 && ![null, 'null', undefined, 'undefined'].includes(pageToken) ? `&pageToken=${pageToken}` : '';
     const options = {
       baseURL: contactsApiHost,
       method: 'GET',

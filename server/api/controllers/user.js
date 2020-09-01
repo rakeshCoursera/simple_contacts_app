@@ -24,9 +24,9 @@ const findOrCreateUser = async (profile, token) => {
   }
 };
 
-const findUser = async (profile) => {
+const findUser = async (userId) => {
   try {
-    const user = await User.findOne({ googleId: profile.id }).exec();
+    const user = await User.findOne({ googleId: userId }).exec();
     return { statusCode: 200, data: user };
   } catch (err) {
     return { statusCode: 500, message: `Something went wrong while fetching user details from db, error: ${err.message}` };

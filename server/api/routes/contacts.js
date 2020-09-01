@@ -11,9 +11,11 @@ const router = express.Router();
 
 router.get('/', isLoggedIn, async (req, res) => {
   const { pageToken, pageNo, pageSize } = req.query;
-  const user = await findUser(req.user);
+  const user = await findUser(req.user.userId);
+
   if (user.statusCode === 200) {
-    const resp = await listContacts(user.data.accessToken, pageToken, pageNo, pageSize);
+    const resp = await listContacts(user.data.accessToken,
+      pageToken, parseInt(pageNo, 10), parseInt(pageSize, 10));
 
     if (resp.statusCode === 200) {
       return res.status(resp.statusCode).json({
@@ -32,7 +34,7 @@ router.get('/', isLoggedIn, async (req, res) => {
 });
 
 router.get('/:accountId', isLoggedIn, async (req, res) => {
-  const user = await findUser(req.user);
+  const user = await findUser(req.user.userId);
   if (user.statusCode === 200) {
     const resp = await getContact(user.data.accessToken, req.params.accountId);
 
@@ -68,7 +70,7 @@ router.post('/', [isLoggedIn, createContactValidator], async (req, res) => {
     return res.status(422).json({ errors: errors.array() });
   }
 
-  const user = await findUser(req.user);
+  const user = await findUser(req.user.userId);
   if (user.statusCode === 200) {
     const resp = await createContact(user.data.accessToken, req.body);
 
@@ -106,7 +108,7 @@ router.patch('/', [isLoggedIn, updateContactValidator], async (req, res) => {
     return res.status(422).json({ errors: errors.array() });
   }
 
-  const user = await findUser(req.user);
+  const user = await findUser(req.user.userId);
   if (user.statusCode === 200) {
     const resp = await updateContact(user.data.accessToken, user.data.googleId, req.body);
 
@@ -127,7 +129,7 @@ router.patch('/', [isLoggedIn, updateContactValidator], async (req, res) => {
 });
 
 router.delete('/:accountId', isLoggedIn, async (req, res) => {
-  const user = await findUser(req.user);
+  const user = await findUser(req.user.userId);
   if (user.statusCode === 200) {
     const resp = await deleteContact(user.data.accessToken, req.params.accountId);
 

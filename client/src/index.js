@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Provider , ReactReduxContext} from 'react-redux';
+import { Provider, ReactReduxContext } from 'react-redux';
+import { CookiesProvider } from 'react-cookie';
 import { ConnectedRouter } from 'connected-react-router';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import { ThemeProvider } from '@material-ui/core/styles';
@@ -14,15 +15,15 @@ const store = configureStore();
 export default function App() {
   return (
     <Provider store={store} context={ReactReduxContext}>
-      <ConnectedRouter history={history} context={ReactReduxContext}>
-          <React.StrictMode>
-            <ThemeProvider theme={theme}>
-              {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
-              <CssBaseline />
-                <AppRoutes />
-            </ThemeProvider>
-          </React.StrictMode>
-      </ConnectedRouter>
+      <CookiesProvider>
+        <ConnectedRouter history={history} context={ReactReduxContext}>
+          <ThemeProvider theme={theme}>
+            {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
+            <CssBaseline />
+            <AppRoutes />
+          </ThemeProvider>
+        </ConnectedRouter>
+      </CookiesProvider>
     </Provider>
   );
 }

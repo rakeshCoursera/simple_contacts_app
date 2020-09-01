@@ -1,9 +1,11 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { AppBar, Toolbar, IconButton, Typography, Button } from '@material-ui/core';
+import { useCookies } from 'react-cookie';
+import { AppBar, Toolbar, IconButton, Typography, Button, Avatar } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+import config from '../config/config';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -35,9 +37,13 @@ const useStyles = makeStyles((theme) => ({
 
 export default function SearchAppBar() {
   const classes = useStyles();
+  const [, , removeCookie] = useCookies(['token']);
   const profile = useSelector(state => state.profile);
 
-  console.log('navbar profile: ', profile)
+  const handleLogout = () => {
+    removeCookie('token', { path: '/', maxAge: 0 });
+    window.location.replace(`${config.apiUrl}/auth/logout`);
+  }
 
   return (
     <div className={classes.root}>
@@ -49,7 +55,9 @@ export default function SearchAppBar() {
             color="inherit"
             aria-label="open drawer"
           >
-            <AccountCircleIcon style={{ fontSize: 40 }} />
+            {'image' in profile ?
+            <Avatar alt={profile.username} src={profile.image} />:
+            <AccountCircleIcon style={{ fontSize: 40 }} />}
           </IconButton>
 
           <div className={classes.userDiv}>
@@ -61,7 +69,11 @@ export default function SearchAppBar() {
             </Typography>
           </div>
 
-          {Object.keys(profile).length ? <Button color="inherit"> <ExitToAppIcon /> </Button>: <div></div>}
+          {Object.keys(profile).length ? 
+            <Button color="inherit" onClick={()=> handleLogout()}> 
+              <ExitToAppIcon /> 
+            </Button>: 
+          <div></div>}
 
         </Toolbar>
       </AppBar>

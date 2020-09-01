@@ -2,6 +2,7 @@ import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Grid, Paper, Button, CardMedia } from '@material-ui/core';
 import glogo from '../static/google.png';
+import config from '../config/config';
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -30,7 +31,7 @@ export default function Login() {
     const classes = useStyles();
 
     const handleAuthRedirect = () => {
-        window.location.replace('http://localhost:3000/auth/google');
+        window.location.replace(`${config.apiUrl}/auth/google`);
     }
 
     return (

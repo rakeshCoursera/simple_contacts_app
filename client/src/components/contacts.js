@@ -1,15 +1,22 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useCookies } from 'react-cookie';
+import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles, withStyles } from '@material-ui/core/styles';
 import {
-    Typography, Paper, TableContainer, Table, TableHead, TableBody, TableRow, TableCell, Avatar,
-    Grid, Checkbox,
+    Typography, Paper, TableContainer, Table, TableHead, TableBody, TableRow, TableCell, TablePagination,
+    Avatar, Grid, Checkbox, CircularProgress
 } from '@material-ui/core';
 import DeleteIcon from '@material-ui/icons/Delete';
+
+import { fetchContacts } from '../redux/index';
 
 const useStyles = makeStyles(theme => ({
     root: {
         width: '100%',
-        marginTop: theme.spacing(5),
+        marginTop: theme.spacing(3),
+    },
+    progress: {
+        textAlign: 'center',
     },
     paper: {
         width: '100%',
@@ -23,24 +30,17 @@ const useStyles = makeStyles(theme => ({
         fontWeight: "bold",
         color: '#B0C6FF'
     },
-    media: {
-        width: '30.93px',
-        height: '32px',
-        textAlign: 'center',
-    }
 }));
 
-function createData(name, email, phone, photo) {
-    return { name, email, phone, photo };
-}
+const StyledDeleteIcon = withStyles(() => ({
+    root: {
+        "&:hover": {
+            color: "green !important",
+        },
+    },
+}))(DeleteIcon);
 
-const rows = [
-    createData('Rakesh Sharma', 'rakesh@test.com', '1234567891', 'https://lh3.googleusercontent.com/a-/AOh14Gi5m3G2KaJGgDDfbefCY84BE6XuxZFzMxvpVqWxAA=s80-p-k-no'),
-    createData('Gaurav Sharma', 'gaurav@test.com', '2345678912', 'https://lh3.googleusercontent.com/a-/AOh14GjB1TW8n8xjqhej0cwZj9TKyBdNZnJTYJ_X_P_xzQ=s80-p-k-no'),
-    createData('Shubham Gawle', 'shubham@test.com', '3456789123', 'https://lh3.googleusercontent.com/a-/AOh14Gi34Bi20J7BTXH9FjkffjDQB2N-ciPlRuY7ZokmMw=s80-p-k-no'),
-];
-
-export const StyledTableRow = withStyles(() => ({
+const StyledTableRow = withStyles(() => ({
     root: {
         "&:hover": {
             backgroundColor: "#ddd !important",
@@ -48,62 +48,106 @@ export const StyledTableRow = withStyles(() => ({
     },
 }))(TableRow);
 
-export default function Login({ data }) {
+export default function Login() {
     const classes = useStyles();
+
+    const dispatch = useDispatch();
+    const [cookies] = useCookies(['token']);
+    const profile = useSelector(state => state.profile);
+    const contacts = useSelector(state => state.contacts);
+
+    const [page, setPage] = React.useState(0);
+    const [rowsPerPage, setRowsPerPage] = React.useState(10);
+
+    useEffect(() => {
+        dispatch(fetchContacts(cookies.token));
+    }, [profile, cookies, dispatch]);
+
+    useEffect(() => {
+        if (page === 0) {
+            dispatch(fetchContacts(cookies.token, null, page, rowsPerPage));
+        } else {
+            dispatch(fetchContacts(cookies.token, contacts.data.nextPageToken, page, rowsPerPage));
+        }
+    // eslint-disable-next-line
+    }, [page, rowsPerPage, cookies, dispatch]);
+
+    const handleChangePage = (event, newPage) => {
+        setPage(newPage);
+    };
+
+    const handleChangeRowsPerPage = (event) => {
+        setRowsPerPage(parseInt(event.target.value, 10));
+        setPage(0);
+    };
 
     return (
         <div className={classes.root}>
-            <Paper className={classes.paper}>
-                <Typography variant="h6">
-                    Contacts ({rows.length})
-                </Typography>
-                <TableContainer className={classes.table}>
-                    <Table stickyHeader size="small" aria-label="sticky table" >
-                        <TableHead>
-                            <TableRow>
-                                <TableCell className={classes.headCell}>Name</TableCell>
-                                <TableCell className={classes.headCell}>Email</TableCell>
-                                <TableCell className={classes.headCell}>Phone Number</TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {rows.map((row) => (
-                                <StyledTableRow hover key={row.name}>
-                                    <TableCell component="th" scope="row">
-                                        <Grid container direction="row" alignItems="center">
-                                            <Grid item>
-                                                <Checkbox 
-                                                    checked={true}
-                                                    size="small"
-                                                    color="primary"
-                                                    inputProps={{ 'aria-label': 'primary checkbox' }} 
-                                                />
-                                            </Grid>
-                                            <Grid item>
-                                                <Avatar alt={`${row.name}`} src={row.photo} />
-                                            </Grid>
-                                            <Grid item>
-                                                &nbsp; {row.name}
-                                            </Grid>
-                                        </Grid>
-                                    </TableCell>
-                                    <TableCell>{row.email}</TableCell>
-                                    <TableCell>
-                                        <Grid container direction="row" alignItems="center">
-                                            <Grid item>
-                                                {row.phone} &emsp;
-                                            </Grid>
-                                            <Grid item>
-                                                <DeleteIcon style={{marginTop: '6px'}} fontSize="small"/>
-                                            </Grid>
-                                        </Grid>
-                                    </TableCell>
-                                </StyledTableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
-                </TableContainer>
-            </Paper>
+            {contacts.loading ?
+                <div className={classes.progress}> <CircularProgress /> </div> :
+                contacts.error ?
+                    <div>{`Error: ${contacts.error}`}</div> :
+                    Object.keys(contacts.data).length > 0 ?
+                        <Paper className={classes.paper}>
+                            <Typography variant="h6">
+                                &nbsp; Contacts ({contacts.data.totalItems})
+                            </Typography>
+                            <TableContainer className={classes.table}>
+                                <Table stickyHeader size="small" aria-label="sticky table" >
+                                    <TableHead>
+                                        <TableRow>
+                                            {['Name', 'Email', 'Phone Number', ''].map((val) => (
+                                                <TableCell className={classes.headCell} key={val}>{val}</TableCell>
+                                            ))}
+                                        </TableRow>
+                                    </TableHead>
+                                    <TableBody>
+                                        {contacts.data.connections.map((row) => (
+                                            <StyledTableRow hover key={row.etag}>
+                                                <TableCell component="th" scope="row">
+                                                    <Grid container direction="row" alignItems="center">
+                                                        <Grid item>
+                                                            <Checkbox
+                                                                checked={true}
+                                                                size="small"
+                                                                color="primary"
+                                                                inputProps={{ 'aria-label': 'primary checkbox' }}
+                                                            />
+                                                        </Grid>
+                                                        <Grid item>
+                                                            <Avatar alt={'names' in row ? row.names[0].displayName : ''} src={'photos' in row ? row.photos[0].url : ''} />
+                                                        </Grid>
+                                                        <Grid item>
+                                                            &nbsp; {'names' in row ? row.names[0].displayName : ''}
+                                                        </Grid>
+                                                    </Grid>
+                                                </TableCell>
+                                                <TableCell>
+                                                    {'emailAddresses' in row ? row.emailAddresses[0].value : ''}
+                                                </TableCell>
+                                                <TableCell>
+                                                    {'phoneNumbers' in row ? row.phoneNumbers[0].value : ''} &emsp;
+                                        </TableCell>
+                                                <TableCell>
+                                                    <StyledDeleteIcon style={{ marginTop: '6px' }} fontSize="small"/>
+                                                </TableCell>
+                                            </StyledTableRow>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                            </TableContainer>
+                            <TablePagination
+                                rowsPerPageOptions={[10, 25, 50]}
+                                component="div"
+                                count={contacts.data.totalItems}
+                                rowsPerPage={rowsPerPage}
+                                page={page}
+                                onChangePage={handleChangePage}
+                                onChangeRowsPerPage={handleChangeRowsPerPage}
+                            />
+                        </Paper> :
+                        <div className={classes.progress}> <CircularProgress /> </div>
+            }
         </div>
     );
 };

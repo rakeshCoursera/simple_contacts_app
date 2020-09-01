@@ -106,14 +106,6 @@ export default function Login() {
                                             <StyledTableRow hover key={row.etag}>
                                                 <TableCell component="th" scope="row">
                                                     <Grid container direction="row" alignItems="center">
-                                                        {/* <Grid item>
-                                                            <Checkbox
-                                                                checked={true}
-                                                                size="small"
-                                                                color="primary"
-                                                                inputProps={{ 'aria-label': 'primary checkbox' }}
-                                                            />
-                                                        </Grid> */}
                                                         <Grid item>
                                                             <Avatar alt={'names' in row ? row.names[0].displayName : ''} src={'photos' in row ? row.photos[0].url : ''} />
                                                         </Grid>

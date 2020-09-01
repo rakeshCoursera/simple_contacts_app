@@ -60,6 +60,8 @@ function reducer(state = initialState, action) {
         case DELETE_CONTACT_SUCCESS:
             const listContacts = Object.assign({}, state.list);
             listContacts.data.connections = listContacts.data.connections.filter(val => val.resourceName !== action.payload.resourceName);
+            listContacts.data.totalPeople = listContacts.data.totalPeople - 1;
+            listContacts.data.totalItems = listContacts.data.totalItems - 1;
             return {
                 ...state,
                 list: listContacts,

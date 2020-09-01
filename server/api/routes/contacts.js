@@ -10,12 +10,18 @@ const { createContactValidator, updateContactValidator } = require('../validator
 const router = express.Router();
 
 router.get('/', isLoggedIn, async (req, res) => {
-  const { pageToken, pageNo, pageSize } = req.query;
+  let { pageToken, pageNo, pageSize } = req.query;
+
+  pageToken = pageToken || undefined;
+  // eslint-disable-next-line no-restricted-globals
+  pageNo = isNaN(parseInt(pageNo, 10)) ? undefined : parseInt(pageNo, 10);
+  // eslint-disable-next-line no-restricted-globals
+  pageSize = isNaN(parseInt(pageSize, 10)) ? undefined : parseInt(pageSize, 10);
+
   const user = await findUser(req.user.userId);
 
   if (user.statusCode === 200) {
-    const resp = await listContacts(user.data.accessToken,
-      pageToken, parseInt(pageNo, 10), parseInt(pageSize, 10));
+    const resp = await listContacts(user.data.accessToken, pageToken, pageNo, pageSize);
 
     if (resp.statusCode === 200) {
       return res.status(resp.statusCode).json({
@@ -55,15 +61,6 @@ router.get('/:accountId', isLoggedIn, async (req, res) => {
 });
 
 router.post('/', [isLoggedIn, createContactValidator], async (req, res) => {
-  // const body = {
-  //   firstName: 'Rakesh',
-  //   middleName: 'Kumar',
-  //   lastName: 'Sharma',
-  //   email: 'rakesh143190014@gmail.com',
-  //   mobile: '9326715481',
-  //   mobileType: 'work',
-  // };
-
   // Finds the validation errors in this request and wraps them in an object with handy functions
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -91,17 +88,6 @@ router.post('/', [isLoggedIn, createContactValidator], async (req, res) => {
 });
 
 router.patch('/', [isLoggedIn, updateContactValidator], async (req, res) => {
-  // const body = {
-  //   firstName: 'Rakesh',
-  //   middleName: 'kr',
-  //   lastName: 'Sharma',
-  //   email: 'rakesh143190014@gmail.com',
-  //   mobile: '7738692380',
-  //   mobileType: 'home',
-  //   etag: '%EgoBAj0DCT4LPzcuGgQBAgUHIgxNU1FqTmVpUTdDRT0=',
-  //   photo: 'base 64 encoded string',
-  // };
-
   // Finds the validation errors in this request and wraps them in an object with handy functions
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -109,6 +95,7 @@ router.patch('/', [isLoggedIn, updateContactValidator], async (req, res) => {
   }
 
   const user = await findUser(req.user.userId);
+
   if (user.statusCode === 200) {
     const resp = await updateContact(user.data.accessToken, user.data.googleId, req.body);
 

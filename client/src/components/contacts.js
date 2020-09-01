@@ -4,11 +4,11 @@ import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles, withStyles } from '@material-ui/core/styles';
 import {
     Typography, Paper, TableContainer, Table, TableHead, TableBody, TableRow, TableCell, TablePagination,
-    Avatar, Grid, Checkbox, CircularProgress
+    Avatar, Grid, CircularProgress, // Checkbox
 } from '@material-ui/core';
 import DeleteIcon from '@material-ui/icons/Delete';
 
-import { fetchContacts } from '../redux/index';
+import { fetchContacts, deleteContact } from '../redux/index';
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -54,7 +54,7 @@ export default function Login() {
     const dispatch = useDispatch();
     const [cookies] = useCookies(['token']);
     const profile = useSelector(state => state.profile);
-    const contacts = useSelector(state => state.contacts);
+    const contacts = useSelector(state => state.contacts.list);
 
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
@@ -106,14 +106,14 @@ export default function Login() {
                                             <StyledTableRow hover key={row.etag}>
                                                 <TableCell component="th" scope="row">
                                                     <Grid container direction="row" alignItems="center">
-                                                        <Grid item>
+                                                        {/* <Grid item>
                                                             <Checkbox
                                                                 checked={true}
                                                                 size="small"
                                                                 color="primary"
                                                                 inputProps={{ 'aria-label': 'primary checkbox' }}
                                                             />
-                                                        </Grid>
+                                                        </Grid> */}
                                                         <Grid item>
                                                             <Avatar alt={'names' in row ? row.names[0].displayName : ''} src={'photos' in row ? row.photos[0].url : ''} />
                                                         </Grid>
@@ -127,9 +127,13 @@ export default function Login() {
                                                 </TableCell>
                                                 <TableCell>
                                                     {'phoneNumbers' in row ? row.phoneNumbers[0].value : ''} &emsp;
-                                        </TableCell>
+                                                </TableCell>
                                                 <TableCell>
-                                                    <StyledDeleteIcon style={{ marginTop: '6px' }} fontSize="small"/>
+                                                    <StyledDeleteIcon 
+                                                        style={{ marginTop: '6px' }} 
+                                                        fontSize="small"
+                                                        onClick={() => dispatch(deleteContact(cookies.token, row.resourceName))}
+                                                    />
                                                 </TableCell>
                                             </StyledTableRow>
                                         ))}

@@ -40,116 +40,117 @@ After setting up the application run it then go to `http://localhost:3000/auth/g
 ### /api/v1/contact/
 * *Description*: API for listing contacts/connections
 * *Method*: GET
+* *Query Params*: pageToken=<value>&pageNo=<page_number>&pageSize=<page_size>
 * *Authorization*: Bearer <auth_token> 
 * *Responses*: 
     * [200-Ok]
     ```
     {
-    "data": {
-        "connections": [
-            {
-                "resourceName": "people/<accountId>",
-                "etag": "etag of account",
-                "names": [
-                    {
-                        "metadata": {
-                            "primary": true,
-                            "source": {
-                                "type": "CONTACT",
-                                "id": "metadata id"
-                            }
-                        },
-                        "displayName": "firstname lastname",
-                        "familyName": "lastname",
-                        "givenName": "firstname",
-                        "displayNameLastFirst": "lastname, firstname",
-                        "unstructuredName": "firstname lastname"
-                    }
-                ],
-                "photos": [
-                    {
-                        "metadata": {
-                            "primary": true,
-                            "source": {
-                                "type": "CONTACT",
-                                "id": "metadata id"
-                            }
-                        },
-                        "url": "image url of contact",
-                        "default": true
-                    }
-                ],
-                "phoneNumbers": [
-                    {
-                        "metadata": {
-                            "primary": true,
-                            "source": {
-                                "type": "CONTACT",
-                                "id": "metadata id"
-                            }
-                        },
-                        "value": "phone number value",
-                        "canonicalForm": "phone number with std code",
-                        "type": "mobile",
-                        "formattedType": "Mobile"
-                    }
-                ]
-            },
-            {
-                "resourceName": "people/<account id>",
-                "etag": "etag of account",
-                "names": [
-                    {
-                        "metadata": {
-                            "primary": true,
-                            "source": {
-                                "type": "CONTACT",
-                                "id": "metadata id1"
-                            }
-                        },
-                        "displayName": "firstname middlename lastname",
-                        "familyName": "lastname",
-                        "givenName": "firstname",
-                        "middleName": "middlename",
-                        "displayNameLastFirst": "lastname, firstname middlename",
-                        "unstructuredName": "firstname middlename lastname"
-                    }
-                ],
-                "photos": [
-                    {
-                        "metadata": {
-                            "primary": true,
-                            "source": {
-                                "type": "CONTACT",
-                                "id": "metadata id1"
-                            }
-                        },
-                        "url":  "image url of contact",
-                        "default": true
-                    }
-                ],
-                "phoneNumbers": [
-                    {
-                        "metadata": {
-                            "primary": true,
-                            "source": {
-                                "type": "CONTACT",
-                                "id": "metadata id1"
-                            }
-                        },
-                        "value": "phone number value",
-                        "canonicalForm": "phone number with std code",
-                        "type": "mobile",
-                        "formattedType": "Mobile"
-                    }
-                ]
-            },
-        ],
-        "nextPageToken": "<token to access next page>",
-        "totalPeople": 'total contacts',
-        "totalItems": 'total contacts'
+        "data": {
+            "connections": [
+                {
+                    "resourceName": "people/<accountId>",
+                    "etag": "etag of account",
+                    "names": [
+                        {
+                            "metadata": {
+                                "primary": true,
+                                "source": {
+                                    "type": "CONTACT",
+                                    "id": "metadata id"
+                                }
+                            },
+                            "displayName": "firstname lastname",
+                            "familyName": "lastname",
+                            "givenName": "firstname",
+                            "displayNameLastFirst": "lastname, firstname",
+                            "unstructuredName": "firstname lastname"
+                        }
+                    ],
+                    "photos": [
+                        {
+                            "metadata": {
+                                "primary": true,
+                                "source": {
+                                    "type": "CONTACT",
+                                    "id": "metadata id"
+                                }
+                            },
+                            "url": "image url of contact",
+                            "default": true
+                        }
+                    ],
+                    "phoneNumbers": [
+                        {
+                            "metadata": {
+                                "primary": true,
+                                "source": {
+                                    "type": "CONTACT",
+                                    "id": "metadata id"
+                                }
+                            },
+                            "value": "phone number value",
+                            "canonicalForm": "phone number with std code",
+                            "type": "mobile",
+                            "formattedType": "Mobile"
+                        }
+                    ]
+                },
+                {
+                    "resourceName": "people/<account id>",
+                    "etag": "etag of account",
+                    "names": [
+                        {
+                            "metadata": {
+                                "primary": true,
+                                "source": {
+                                    "type": "CONTACT",
+                                    "id": "metadata id1"
+                                }
+                            },
+                            "displayName": "firstname middlename lastname",
+                            "familyName": "lastname",
+                            "givenName": "firstname",
+                            "middleName": "middlename",
+                            "displayNameLastFirst": "lastname, firstname middlename",
+                            "unstructuredName": "firstname middlename lastname"
+                        }
+                    ],
+                    "photos": [
+                        {
+                            "metadata": {
+                                "primary": true,
+                                "source": {
+                                    "type": "CONTACT",
+                                    "id": "metadata id1"
+                                }
+                            },
+                            "url":  "image url of contact",
+                            "default": true
+                        }
+                    ],
+                    "phoneNumbers": [
+                        {
+                            "metadata": {
+                                "primary": true,
+                                "source": {
+                                    "type": "CONTACT",
+                                    "id": "metadata id1"
+                                }
+                            },
+                            "value": "phone number value",
+                            "canonicalForm": "phone number with std code",
+                            "type": "mobile",
+                            "formattedType": "Mobile"
+                        }
+                    ]
+                },
+            ],
+            "nextPageToken": "<token to access next page>",
+            "totalPeople": 'total contacts',
+            "totalItems": 'total contacts'
+        }
     }
-}
     ```
     * [500-Internal Server Error]
     ```
